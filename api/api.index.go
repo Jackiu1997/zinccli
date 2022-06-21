@@ -1,19 +1,18 @@
-package zinccli
+package api
 
 import (
 	"encoding/json"
-	"zinccli/meta"
-	"zinccli/schema"
+	"zinccli/api/schema"
 )
 
-func (z *ZincCli) CreateIndex(indexName string, data *schema.IndexRequest) (*schema.IndexResponse, error) {
+func (z *ZincApi) CreateIndex(indexName string, data *schema.CreateIndexRequest) (*schema.IndexResponse, error) {
 	url := "/index/" + indexName
 
 	query, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := z.ZincRequest("POST", url, string(query))
+	resp, err := z.Request("POST", url, string(query))
 	if err != nil {
 		return nil, err
 	}
@@ -26,10 +25,10 @@ func (z *ZincCli) CreateIndex(indexName string, data *schema.IndexRequest) (*sch
 	return &indexResponse, nil
 }
 
-func (z *ZincCli) DeleteIndex(indexName string) (*schema.IndexResponse, error) {
+func (z *ZincApi) DeleteIndex(indexName string) (*schema.IndexResponse, error) {
 	url := "/index/" + indexName
 
-	resp, err := z.ZincRequest("DELETE", url, "")
+	resp, err := z.Request("DELETE", url, "")
 	if err != nil {
 		return nil, err
 	}
@@ -42,10 +41,10 @@ func (z *ZincCli) DeleteIndex(indexName string) (*schema.IndexResponse, error) {
 	return &indexResponse, nil
 }
 
-func (z *ZincCli) GetMapping(indexName string) (*schema.IndexResponse, error) {
+func (z *ZincApi) GetMapping(indexName string) (*schema.MappingRespone, error) {
 	url := "/" + indexName + "_mapping"
 
-	resp, err := z.ZincRequest("GET", url, "")
+	resp, err := z.Request("GET", url, "")
 	if err != nil {
 		return nil, err
 	}
@@ -64,49 +63,45 @@ func (z *ZincCli) GetMapping(indexName string) (*schema.IndexResponse, error) {
 		return nil, err
 	}
 
-	var indexResponse schema.IndexResponse
-	err = json.Unmarshal(m1["mappings"].([]byte), &indexResponse)
+	var mappingRespone schema.MappingRespone
+	err = json.Unmarshal(m1["mappings"].([]byte), &mappingRespone)
 	if err != nil {
 		return nil, err
 	}
-	return &indexResponse, nil
+	return &mappingRespone, nil
 }
 
-func (z *ZincCli) UpdateMapping(indexName string, data string) (*schema.IndexResponse, error) {
+func (z *ZincApi) UpdateMapping(indexName string, data string) (*schema.MappingMsgRespone, error) {
 	url := "/" + indexName + "_mapping"
 
-	resp, err := z.ZincRequest("PUT", url, data)
+	resp, err := z.Request("PUT", url, data)
 	if err != nil {
 		return nil, err
 	}
 
-	var m = make(map[string]interface{})
-	err = json.Unmarshal(resp, &m)
+	var updateMappingRespone schema.MappingMsgRespone
+	err = json.Unmarshal(resp, &updateMappingRespone)
 	if err != nil {
 		return nil, err
 	}
-	return &schema.IndexResponse{
-		Index:   indexName,
-		Message: m["message"].(string),
-		Storage: "",
-	}, nil
+	return &updateMappingRespone, nil
 }
 
-func (z *ZincCli) ListIndex() ([]*meta.Index, error) {
+func (z *ZincApi) ListIndex() ([]*schema.IndexResponse, error) {
 	url := "/index"
 
-	resp, err := z.ZincRequest("GET", url, "")
+	resp, err := z.Request("GET", url, "")
 	if err != nil {
 		return nil, err
 	}
 
-	var indexes []meta.Index
+	var indexes []schema.IndexResponse
 	err = json.Unmarshal(resp, &indexes)
 	if err != nil {
 		return nil, err
 	}
 
-	var res []*meta.Index
+	var res []*schema.IndexResponse
 	for _, index := range indexes {
 		res = append(res, &index)
 	}

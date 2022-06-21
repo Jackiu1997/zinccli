@@ -1,14 +1,14 @@
-package zinccli
+package api
 
 import (
 	"encoding/json"
-	"zinccli/schema"
+	"zinccli/api/schema"
 )
 
-func (z *ZincCli) CreateDocument(indexName string, data string) (*schema.DocumentResponse, error) {
+func (z *ZincApi) CreateDocument(indexName string, data string) (*schema.DocumentResponse, error) {
 	url := "/" + indexName + "/_doc"
 
-	resp, err := z.ZincRequest("POST", url, data)
+	resp, err := z.Request("POST", url, data)
 	if err != nil {
 		return nil, err
 	}
@@ -21,10 +21,10 @@ func (z *ZincCli) CreateDocument(indexName string, data string) (*schema.Documen
 	return &docResp, nil
 }
 
-func (z *ZincCli) CreateDocumentWithId(indexName string, id string, data string) (*schema.DocumentResponse, error) {
+func (z *ZincApi) CreateDocumentWithId(indexName string, id string, data string) (*schema.DocumentResponse, error) {
 	url := "/" + indexName + "/_doc/" + id
 
-	resp, err := z.ZincRequest("POST", url, data)
+	resp, err := z.Request("POST", url, data)
 	if err != nil {
 		return nil, err
 	}
@@ -37,10 +37,10 @@ func (z *ZincCli) CreateDocumentWithId(indexName string, id string, data string)
 	return &docResp, nil
 }
 
-func (z *ZincCli) UpdateDocument(indexName string, id string, data string) (*schema.DocumentResponse, error) {
+func (z *ZincApi) UpdateDocument(indexName string, id string, data string) (*schema.DocumentResponse, error) {
 	url := "/" + indexName + "/_update/" + id
 
-	resp, err := z.ZincRequest("POST", url, data)
+	resp, err := z.Request("POST", url, data)
 	if err != nil {
 		return nil, err
 	}
@@ -53,10 +53,10 @@ func (z *ZincCli) UpdateDocument(indexName string, id string, data string) (*sch
 	return &docResp, nil
 }
 
-func (z *ZincCli) DeleteDocument(indexName string, id string) (*schema.DocumentResponse, error) {
+func (z *ZincApi) DeleteDocument(indexName string, id string) (*schema.DocumentResponse, error) {
 	url := "/" + indexName + "/_doc/" + id
 
-	resp, err := z.ZincRequest("DELETE", url, "")
+	resp, err := z.Request("DELETE", url, "")
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +69,10 @@ func (z *ZincCli) DeleteDocument(indexName string, id string) (*schema.DocumentR
 	return &docResp, nil
 }
 
-func (z *ZincCli) Bulk(data string) (*schema.BulkResponse, error) {
+func (z *ZincApi) Bulk(data string) (*schema.BulkResponse, error) {
 	url := "/_bulk"
 
-	resp, err := z.ZincRequest("POST", url, data)
+	resp, err := z.Request("POST", url, data)
 	if err != nil {
 		return nil, err
 	}
